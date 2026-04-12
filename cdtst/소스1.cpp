@@ -899,11 +899,125 @@ int main()
 }
 
 ////////////////////////////////////////////////////////////////////////////
+//백준 4963
+
+#include<iostream>
+#include<vector>
+#include<deque>
+using namespace std;
+
+int dir[8][2]
+=
+{
+	{1, 0},
+	{1, 1},
+	{0, 1},
+	{-1, 1},
+	{-1, 0},
+	{-1, -1},
+	{0, -1},
+	{1, -1},
+};
+void bfs(
+	int startx, int starty,
+	vector<vector<int>>& board,
+	vector<vector<int>>& visited,
+	int w, int h)
+{
+	deque<pair<int, int>> q;
+	q.push_back({ starty, startx });
+	visited[starty][startx] = 1;
+
+	while (not q.empty())
+	{
+		int cury = q.front().first;
+		int curx = q.front().second;
+		q.pop_front();
+
+		for (int i = 0; i < 8; ++i)
+		{
+			int ny = cury + dir[i][0];
+			int nx = curx + dir[i][1];
+
+			if (ny >= 0 && ny < h && nx >= 0 && nx < w)
+			{
+				if (board[ny][nx] == 1 && visited[ny][nx] == 0)
+				{
+					visited[ny][nx] = 1;
+					q.push_back({ ny, nx });
+				}
+			}
+
+		}
+
+	}
+
+
+}
+
+void dfs(int y, int x, int h, int w, vector<vector<int>>& board, vector<vector<int>>& visited) {
+	visited[y][x] = 1; // 현재 위치 방문 처리
+
+	// 8방향 탐색
+	for (int i = 0; i < 8; ++i) {
+		int ny = y + dir[i][0];
+		int nx = x + dir[i][1];
+
+		// 맵의 범위를 벗어나지 않고
+		if (ny >= 0 && ny < h && nx >= 0 && nx < w) {
+			// 땅(1)이면서 아직 방문하지 않은 곳이라면 재귀적으로 파고듦
+			if (board[ny][nx] == 1 && visited[ny][nx] == 0) {
+				dfs(ny, nx, h, w, board, visited);
+			}
+		}
+	}
+}
+
+int main()
+{
+	int w, h;
+
+
+	while (true)
+	{
+		cin >> w >> h;
+		if (w == 0 && h == 0)return 0;
+
+		vector<vector<int>> board(h, vector<int>(w, 0));
+		vector<vector<int>> visited(h, vector<int>(w, 0));
+		int temp1;
+		int cnt{};
+
+		for (int i = 0; i < h; ++i)
+		{
+			for (int j = 0; j < w; ++j)
+			{
+				cin >> temp1;
+				board[i][j] = temp1;
+			}
+		}
+
+		for (int i = 0; i < h; ++i)
+		{
+			for (int j = 0; j < w; ++j)
+			{
+				if (board[i][j] == 1 && visited[i][j] == 0)
+				{
+					bfs(j, i, board, visited, w, h);
+					++cnt;
+				}
+			}
+		}
+
+		cout << cnt << '\n';
+
+	}
+}
+
+////////////////////////////////////////////////////////////////////////////
 //백준 1260
 
 
 
 ////////////////////////////////////////////////////////////////////////////
 //백준 1260
-
-

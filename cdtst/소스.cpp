@@ -1,39 +1,57 @@
 #include<iostream>
 #include<vector>
+
+
 using namespace std;
 
-int dir[8][2]
-=
-{
-	{1, 0},
-	{1, 1},
-	{0, 1},
-	{-1, 1},
-	{-1, 0},
-	{-1, -1},
-	{0, -1},
-	{1, -1},
-};
 
-int main()
+void pre(const vector<pair<char, char>>& tree, char root)
 {
-	int w, h;
-	vector<vector<char>> board;
-	vector<vector<char>> visited;
+	cout << root;
 
-	while (true)
+	if(tree[root - 'A'].first!= '.')pre(tree, tree[root - 'A'].first);
+	if (tree[root - 'A'].second != '.')pre(tree, tree[root - 'A'].second);
+
+}
+
+void in(const vector<pair<char, char>>& tree, char root)
+{
+	if (tree[root - 'A'].first != '.')in(tree, tree[root - 'A'].first);
+	cout << root;
+	if (tree[root - 'A'].second != '.')in(tree, tree[root - 'A'].second);
+}
+
+void post(const vector<pair<char, char>>& tree, char root)
+{
+	if (tree[root - 'A'].first != '.')post(tree, tree[root - 'A'].first);
+	if (tree[root - 'A'].second != '.')post(tree, tree[root - 'A'].second);
+	cout << root;
+	
+}
+
+int main() 
+{
+	int cnt;
+
+	cin >> cnt;
+
+	vector<pair<char, char>> tree(26);
+
+	char root, ln, rn;
+
+	for (int i = 0; i < cnt; ++i)
 	{
-		cin >> w >> h;
-		if (w == 0 && h == 0)return;
-		board.resize(h, vector<char>(w, '0'));
-		visited.resize(h, vector<char>(w, '0'));
-		for (int i = 0; i < h; ++i)
-		{
-			for (int j = 0; j < w; ++j)
-			{
+		cin >> root >> ln >> rn;
 
-			}
-		}
+		tree[root - 'A'].first = ln;
+		tree[root - 'A'].second = rn;
 
 	}
+	pre(tree, 'A');
+	cout << '\n';
+	in(tree, 'A');
+	cout << '\n';
+	post(tree, 'A');
+
+
 }
