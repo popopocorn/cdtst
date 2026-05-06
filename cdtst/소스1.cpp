@@ -1015,9 +1015,872 @@ int main()
 }
 
 ////////////////////////////////////////////////////////////////////////////
-//백준 1260
+//백준 1991 트리순회
+
+#include<iostream>
+#include<vector>
+
+
+using namespace std;
+
+
+void pre(const vector<pair<char, char>>& tree, char root)
+{
+	cout << root;
+
+	if (tree[root - 'A'].first != '.')pre(tree, tree[root - 'A'].first);
+	if (tree[root - 'A'].second != '.')pre(tree, tree[root - 'A'].second);
+
+}
+
+void in(const vector<pair<char, char>>& tree, char root)
+{
+	if (tree[root - 'A'].first != '.')in(tree, tree[root - 'A'].first);
+	cout << root;
+	if (tree[root - 'A'].second != '.')in(tree, tree[root - 'A'].second);
+}
+
+void post(const vector<pair<char, char>>& tree, char root)
+{
+	if (tree[root - 'A'].first != '.')post(tree, tree[root - 'A'].first);
+	if (tree[root - 'A'].second != '.')post(tree, tree[root - 'A'].second);
+	cout << root;
+
+}
+
+int main()
+{
+	int cnt;
+
+	cin >> cnt;
+
+	vector<pair<char, char>> tree(26);
+
+	char root, ln, rn;
+
+	for (int i = 0; i < cnt; ++i)
+	{
+		cin >> root >> ln >> rn;
+
+		tree[root - 'A'].first = ln;
+		tree[root - 'A'].second = rn;
+
+	}
+	pre(tree, 'A');
+	cout << '\n';
+	in(tree, 'A');
+	cout << '\n';
+	post(tree, 'A');
+
+
+}
+
+////////////////////////////////////////////////////////////////////////////
+//백준 13416 주식투자
+
+#include<iostream>
+#include<vector>
+#include<limits.h>
+
+using namespace std;
+
+int main()
+{
+	int CaseCnt, day;
+	cin >> CaseCnt;
+
+	for (int i = 0; i < CaseCnt; ++i)
+	{
+		cin >> day;
+		int sol = 0;
+		for (int j = 0; j < day; ++j)
+		{
+			int t;
+			int max = INT_MIN;
+			for (int k = 0; k < 3; ++k)
+			{
+				cin >> t;
+				if (t > max)
+				{
+					if (t > 0) max = t;
+					else max = 0;
+				}
+			}
+			sol += max;
+
+		}
+		cout << sol << endl;
+	}
+
+}
+
+////////////////////////////////////////////////////////////////////////////
+//백준 1931 회의실 배정
+#include<iostream>
+#include<vector>
+#include<algorithm>
+
+using namespace std;
+
+struct meet {
+	int beg;
+	int end;
+};
+
+int main()
+{
+	int cnt;
+	cin >> cnt;
+	vector<meet> time;
+	for (int i = 0; i < cnt; ++i)
+	{
+		int b, e;
+		cin >> b >> e;
+		time.push_back({ b,e });
+	}
+	sort(time.begin(), time.end(), [](const meet& a, const meet& b)
+		{
+			if (a.end == b.end) return a.beg < b.beg;
+			return a.end < b.end;
+		});
+
+	int sol = 0;
+	int last = 0;
+	for (int i = 0; i < cnt; ++i) {
+		if (time[i].beg >= last)
+		{
+			++sol;
+			last = time[i].end;
+		}
+	}
+	cout << sol;
+}
 
 
 
 ////////////////////////////////////////////////////////////////////////////
-//백준 1260
+//tukorea 행렬 게임
+
+#include<iostream>
+#include<vector>
+
+using namespace std;
+
+int main()
+{
+	int a, b;
+	int t = 1;
+	cin >> a >> b;
+	vector<vector<int>> M(a, vector<int>(b));
+	cout << "M\n";
+	for (int i = 0; i < a; ++i)
+	{
+		for (int j = 0; j < b; ++j)
+		{
+			cout << t;
+			M[i][j] = t;
+			++t;
+			if (j != b - 1)cout << ' ';
+		}
+		cout << endl;
+	}
+	cout << "R\n";
+	vector<vector<int>> R(b, vector<int>(a));
+	for (int i = 0; i < b; ++i)
+	{
+		for (int j = 0; j < a; ++j)
+		{
+			R[i][j] = M[a - 1 - j][i];
+			cout << R[i][j];
+			if (j != a - 1)cout << ' ';
+		}
+		cout << endl;
+	}
+	cout << "L\n";
+	vector<vector<int>> L(b, vector<int>(a));
+	for (int i = 0; i < b; ++i)
+	{
+		for (int j = 0; j < a; ++j)
+		{
+			L[i][j] = M[j][b - 1 - i];
+			cout << L[i][j];
+			if (j != a - 1)cout << ' ';
+		}
+		cout << endl;
+	}
+	cout << "T\n";
+	vector<vector<int>> T(b, vector<int>(a));
+	for (int i = 0; i < b; ++i)
+	{
+		for (int j = 0; j < a; ++j)
+		{
+			T[i][j] = M[j][i];
+			cout << T[i][j];
+			if (j != a - 1)cout << ' ';
+		}
+		cout << endl;
+	}
+
+}
+
+
+////////////////////////////////////////////////////////////////////////////
+//프로그래머스 실패율
+
+#include <string>
+#include <vector>
+#include<algorithm>
+#include<iostream>
+
+using namespace std;
+
+struct stage {
+	int num;
+	int player;
+	int notclear;
+
+};
+
+vector<int> solution(int N, vector<int> stages) {
+	vector<int> answer;
+	vector<stage> clearRatio(N);
+
+
+	for (int i = 0; i < N; ++i)
+	{
+		clearRatio[i].num = i + 1;
+		for (int n : stages)
+		{
+			if (n == clearRatio[i].num)
+			{
+				++clearRatio[i].notclear;
+				++clearRatio[i].player;
+			}
+
+			if (n > clearRatio[i].num)
+			{
+				++clearRatio[i].player;
+			}
+		}
+	}
+	sort(clearRatio.begin(), clearRatio.end(),
+		[](const stage& a, const stage& b) {
+			float ratioa = 0;
+			float ratiob = 0;
+			if (a.player != 0)
+				ratioa = (float)a.notclear / a.player;
+
+			if (b.player != 0)
+				ratiob = (float)b.notclear / b.player;
+			if (ratioa == ratiob) {
+				return a.num < b.num;
+			}
+			return ratioa > ratiob;
+		});
+	for (int i = 0; i < N; ++i) {
+		answer.push_back(clearRatio[i].num);
+	}
+	return answer;
+}
+
+int main()
+{
+	int N = 5;
+	vector<int> a = { 2, 1, 2, 6, 2, 4, 3, 3 };
+	vector<int> sol = solution(N, a);
+
+	for (int i : sol)
+	{
+		cout << i << ' ';
+	}
+}
+
+
+
+////////////////////////////////////////////////////////////////////////////
+// 2차시험 범위
+////////////////////////////////////////////////////////////////////////////
+
+
+////////////////////////////////////////////////////////////////////////////
+//백준 14469 소가 건너간 이유
+
+#include<iostream>
+#include<vector>
+#include<algorithm>
+
+using namespace std;
+
+
+int main()
+{
+	int cnt, b, e;
+	cin >> cnt;
+	vector<pair<int, int>>cows(cnt);
+
+	for (int i = 0; i < cnt; ++i)
+	{
+		cin >> b >> e;
+		cows[i] = { b, e };
+	}
+
+	sort(cows.begin(), cows.end());
+
+	int time = 0;
+	for (int i = 0; i < cnt; ++i)
+	{
+		time = max(time, cows[i].first) + cows[i].second;
+	}
+	cout << time;
+}
+
+////////////////////////////////////////////////////////////////////////////
+//백준 2805  나무자르기
+
+#include<iostream>
+#include<vector>
+#include<algorithm>
+
+using namespace std;
+
+int main()
+{
+	int cnt, m;
+	cin >> cnt >> m;
+	vector<int>trees(cnt);
+
+	for (int i = 0; i < cnt; ++i)
+	{
+		cin >> trees[i];
+	}
+	int h = *max_element(trees.begin(), trees.end());
+
+	long long start = 0;
+	long long end = h;
+	int result = 0;
+
+	while (start <= end)
+	{
+		long long sum = 0;
+		long long mid = (end + start) / 2;
+		for (int i = 0; i < cnt; ++i)
+		{
+			if (trees[i] > mid)
+				sum += trees[i] - mid;
+		}
+		if (sum >= m)
+		{
+			result = mid;
+			start = mid + 1;
+		}
+		else
+		{
+			end = mid - 1;
+		}
+	}
+
+	cout << result;
+}
+
+
+////////////////////////////////////////////////////////////////////////////
+//백준 13420 사칙연산
+
+#include<iostream>
+#include<vector>
+#include<string>
+
+using namespace std;
+
+
+
+int main()
+{
+	int cnt;
+	cin >> cnt;
+
+	for (int i = 0; i < cnt; ++i)
+	{
+		long long a, b, c;
+		char op, t;
+		bool correct = false;
+		cin >> a >> op >> b >> t >> c;
+		switch (op)
+		{
+		case '*':
+			if (a * b == c)correct = true;
+			break;
+		case '+':
+			if (a + b == c)correct = true;
+			break;
+		case'-':
+			if (a - b == c)correct = true;
+			break;
+		case'/':
+			if (a / b == c)correct = true;
+			break;
+
+		}
+		if (correct)
+		{
+			cout << "correct\n";
+		}
+		else
+		{
+			cout << "wrong answer\n";
+		}
+	}
+
+}
+
+////////////////////////////////////////////////////////////////////////////
+//tukorea postfix 
+
+#include<iostream>
+#include<deque>
+#include<string>
+#include<algorithm>
+
+using namespace std;
+
+int main()
+{
+	string postfix;
+	deque<string>answer;
+	cin >> postfix;
+
+	for (int i = 0; i < postfix.size(); ++i)
+	{
+		if (isalpha(postfix[i]))
+		{
+			answer.push_back(string(1, postfix[i]));
+		}
+		else {
+			string a = answer.back();
+			answer.pop_back();
+			string b = answer.back();
+			answer.pop_back();
+			answer.push_back(string("(") + b + postfix[i] + a + ")");
+
+		}
+	}
+	for (string s : answer)
+	{
+		for (char c : s)
+		{
+			cout << c;
+		}
+	}
+
+}
+
+////////////////////////////////////////////////////////////////////////////
+//프로그래머스 비밀지도 
+
+#include <string>
+#include <vector>
+#include<iostream>
+
+using namespace std;
+
+vector<string> solution1(int n, vector<int> arr1, vector<int> arr2) {
+	vector<string> answer(n, string(n, ' '));
+
+	for (int i = 0; i < n; ++i)
+	{
+		int num = arr1[i];
+		for (int j = 0; j < n; ++j)
+		{
+			if (num % 2 == 1)answer[i][n - j - 1] = '#';
+			num /= 2;
+		}
+	}
+	for (int i = 0; i < n; ++i)
+	{
+		int num = arr2[i];
+		for (int j = 0; j < n; ++j)
+		{
+			if (num % 2 == 1)answer[i][n - j - 1] = '#';
+			num /= 2;
+		}
+	}
+	return answer;
+}
+
+int main()
+{
+	int n = 5;
+	vector<int>arr1 = { 9, 20, 28, 18, 11 };
+	vector<int>arr2 = { 30, 1, 21, 17, 28 };
+	solution1(n, arr1, arr2);
+}
+
+////////////////////////////////////////////////////////////////////////////
+//백준 어두운 굴다리
+
+#include<iostream>
+#include<vector>
+
+using namespace std;
+
+int main()
+{
+	int len, cnt;
+	cin >> len >> cnt;
+	vector<int>loc(cnt);
+	for (int i = 0; i < cnt; ++i)
+	{
+		cin >> loc[i];
+	}
+
+	int start = 0;
+	int end = len;
+	int sol = 0;
+	while (start <= end)
+	{
+		int h = (start + end) / 2;
+		int last = 0;
+		bool blank = false;
+		for (int i = 0; i < cnt; ++i)
+		{
+			if (loc[i] - h > last)
+			{
+				blank = true;
+			}
+			else
+			{
+				last = loc[i] + h;
+			}
+		}
+		if (last < len)blank = true;
+		if (blank)
+		{
+			start = h + 1;
+		}
+		else
+		{
+			end = h - 1;
+			sol = h;
+		}
+
+
+	}
+
+	cout << sol;
+
+
+}
+
+
+////////////////////////////////////////////////////////////////////////////
+//tukorea  공유기 설치
+
+#include<iostream>
+#include<vector>
+#include<algorithm>
+
+using namespace std;
+
+bool check(int mid, vector<int> house, int cnt)
+{
+	int sol = 1;
+	int last = house[0];
+	for (int i = 1; i < house.size(); ++i) {
+		if (house[i] - last >= mid)
+		{
+			last = house[i];
+			++sol;
+		}
+	}
+	return sol >= cnt;
+}
+
+int main()
+{
+	int h, cnt;
+	cin >> h >> cnt;
+	vector<int> house(h);
+	for (int i = 0; i < h; ++i)
+	{
+		cin >> house[i];
+	}
+
+	sort(house.begin(), house.end());
+
+	int start = 0;
+	int end = house[house.size() - 1];
+	int sol = 0;
+
+	while (start <= end)
+	{
+		int mid = (start + end) / 2;
+		if (check(mid, house, cnt))
+		{
+			sol = mid;
+			start = mid + 1;
+		}
+		else
+		{
+			end = mid - 1;
+		}
+
+	}
+	cout << sol;
+}
+
+////////////////////////////////////////////////////////////////////////////
+//tukorea 예산 
+
+#include<iostream>
+#include<vector>
+#include<numeric>
+#include<algorithm>
+
+using namespace std;
+
+int main()
+{
+	int cnt, money;
+	cin >> cnt;
+
+	vector<int>budget(cnt);
+
+
+	for (int i = 0; i < cnt; ++i)
+	{
+		cin >> budget[i];
+	}
+	cin >> money;
+
+	if (accumulate(budget.begin(), budget.end(), 0) <= money)
+	{
+		cout << *max_element(budget.begin(), budget.end());
+		return 0;
+	}
+
+	int start = 0;
+	int end = *max_element(budget.begin(), budget.end());
+	int sol = 0;
+	while (start <= end)
+	{
+		int mid = (start + end) / 2;
+
+		int a = accumulate(budget.begin(), budget.end(), 0,
+			[mid](int a, int b)->int {
+				if (mid >= b)
+				{
+					a += b;
+				}
+				else
+				{
+					a += mid;
+				}
+				return a;
+			});
+		if (a <= money)
+		{
+			start = mid + 1;
+			sol = mid;
+		}
+		else
+		{
+			end = mid - 1;
+		}
+
+	}
+
+	cout << sol;
+}
+
+
+////////////////////////////////////////////////////////////////////////////
+//tukorea 설탕배달
+
+#include<iostream>
+#include<vector>
+
+using namespace std;
+
+int main()
+{
+	int kg;
+	cin >> kg;
+	vector<int>dp(kg + 1, 1e9);
+	dp[0] = 0;
+	vector<int>t = { 3, 5 };
+	for (int k : t)
+	{
+		for (int j = k; j < kg + 1; ++j)
+		{
+			if (dp[j - k] != 1e9)dp[j] = min(dp[j], dp[j - k] + 1);
+		}
+	}
+	if (dp[kg] != 1e9)cout << dp[kg];
+	else cout << "-1";
+
+}
+
+////////////////////////////////////////////////////////////////////////////
+//tukorea 1만들기
+#include<iostream>
+#include<vector>
+
+using namespace std;
+
+
+int main()
+{
+	int n;
+	cin >> n;
+	vector<int> dp(n + 1);
+	for (int i = 2; i <= n; ++i)
+	{
+		dp[i] = dp[i - 1] + 1;
+		if (i % 2 == 0)
+			dp[i] = min(dp[i], dp[i / 2] + 1);
+		if (i % 3 == 0)
+			dp[i] = min(dp[i], dp[i / 3] + 1);
+	}
+	cout << dp[n];
+}
+
+////////////////////////////////////////////////////////////////////////////
+//tukorea 부분수열합
+
+#include<iostream>
+#include<vector>
+#include<algorithm>
+
+using namespace std;
+
+int main()
+{
+	int cnt;
+	cin >> cnt;
+	vector<int>su(cnt);
+	vector<int>dp(cnt);
+	for (int i = 0; i < cnt; ++i)
+	{
+		cin >> su[i];
+		dp[i] = su[i];
+	}
+
+	for (int i = 1; i < cnt; ++i)
+	{
+		for (int j = 0; j < i; ++j)
+		{
+			if (su[j] < su[i])dp[i] = max(dp[i], dp[j] + su[i]);
+		}
+	}
+
+	cout << *max_element(dp.begin(), dp.end());
+}
+
+////////////////////////////////////////////////////////////////////////////
+//tukorea rbg거리
+
+
+#include<iostream>
+#include<vector>
+#include<algorithm>
+
+using namespace std;
+
+int main()
+{
+	int cnt;
+	cin >> cnt;
+	vector<vector<int>> house(cnt, vector<int>(3));
+	vector<vector<int>> dp(cnt, vector<int>(3));
+
+
+	for (int i = 0; i < cnt; ++i)
+	{
+		for (int j = 0; j < 3; ++j)
+		{
+			cin >> house[i][j];
+			dp[i][j] = house[i][j];
+		}
+	}
+	for (int i = 1; i < cnt; ++i)
+	{
+		for (int j = 0; j < 3; ++j)
+		{
+			dp[i][j] =
+				min(dp[i - 1][(j + 1) % 3] + dp[i][j], dp[i - 1][(j + 2) % 3] + dp[i][j]);
+		}
+	}
+	cout << *min_element(dp[cnt - 1].begin(), dp[cnt - 1].end());
+}
+
+////////////////////////////////////////////////////////////////////////////
+//프로그래머스 베스트 앨범
+
+#include <string>
+#include <vector>
+#include<map>
+#include<iostream>
+#include<algorithm>
+
+using namespace std;
+
+struct song {
+	int num;
+	int plays;
+};
+
+struct record {
+	int total = 0;
+	vector<song>s;
+};
+
+vector<int> solution(vector<string> genres, vector<int> plays) {
+	vector<int> answer;
+	map<string, record> p;
+	for (int i = 0; i < genres.size(); ++i)
+	{
+		p[genres[i]].total += plays[i];
+		p[genres[i]].s.push_back({ i, plays[i] });
+	}
+	vector<pair<string, record>> temp(p.begin(), p.end());
+	sort(temp.begin(), temp.end(), [](const pair<string, record>& a, const pair<string, record>& b) {
+		return a.second.total > b.second.total;
+		});
+	for (auto& m : temp)
+	{
+		sort(m.second.s.begin(), m.second.s.end(), [](const song& a, const song& b) {
+			if (a.plays == b.plays) return a.num < b.num;
+			return a.plays > b.plays;
+			});
+	}
+	for (const auto& m : temp)
+	{
+		for (int i = 0; i < 2 && i < m.second.s.size(); ++i)
+		{
+			answer.push_back(m.second.s[i].num);
+		}
+	}
+
+	return answer;
+}
+
+int main()
+{
+	vector<string> g = { "classic", "pop", "classic", "classic", "pop" };
+	vector<int>p = { 500, 600, 150, 800, 2500 };
+	vector<int> a = solution(g, p);
+	for (int n : a)
+	{
+		cout << n << endl;
+	}
+
+}
+
+////////////////////////////////////////////////////////////////////////////
+//tukorea rbg거리
+
+////////////////////////////////////////////////////////////////////////////
+//tukorea rbg거리
+
+////////////////////////////////////////////////////////////////////////////
+//tukorea rbg거리
