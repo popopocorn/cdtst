@@ -1877,7 +1877,58 @@ int main()
 }
 
 ////////////////////////////////////////////////////////////////////////////
-//tukorea rbg거리
+//프로그래머스 신고결과 받기
+
+#include <string>
+#include <vector>
+#include<unordered_map>
+#include<sstream>
+#include<set>
+#include<iostream>
+
+using namespace std;
+
+vector<int> solution(vector<string> id_list, vector<string> report, int k) {
+	vector<int> answer;
+	unordered_map<string, set<string>> rtable;
+	unordered_map<string, int> table;
+	for (const string& s : report)
+	{
+		stringstream ss(s);
+		string r, e;
+		ss >> r >> e;
+		if (rtable[r].insert(e).second)
+		{
+			++table[e];
+		}
+	}
+	answer.resize(id_list.size(), 0);
+
+	for (int i = 0; i < id_list.size(); ++i)
+	{
+		string r = id_list[i];
+		for (const string& e : rtable[r])
+		{
+			if (table[e] >= k)
+				++answer[i];
+		}
+	}
+
+	return answer;
+}
+
+int main()
+{
+	vector<string>ids = { "muzi", "frodo", "apeach", "neo" };
+	vector<string>rep = { "muzi frodo","apeach frodo","frodo neo","muzi neo","apeach muzi" };
+	int k = 2;
+	auto sol = solution(ids, rep, k);
+
+	for (int i : sol)
+	{
+		cout << i << endl;
+	}
+}
 
 ////////////////////////////////////////////////////////////////////////////
 //tukorea rbg거리
