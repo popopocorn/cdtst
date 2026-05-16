@@ -1931,7 +1931,150 @@ int main()
 }
 
 ////////////////////////////////////////////////////////////////////////////
-//tukorea rbg거리
+//프로그래머스 정수삼각형
+
+#include <string>
+#include <vector>
+#include<algorithm>
+
+#include <iostream>
+
+using namespace std;
+
+
+int solution(vector<vector<int>> triangle) {
+	int answer = 0;
+	int height = triangle.size();
+
+	for (int i = height - 2; i >= 0; --i)
+	{
+		for (int j = 0; j < triangle[i].size(); ++j)
+		{
+			triangle[i][j] += max(triangle[i + 1][j], triangle[i + 1][j + 1]);
+		}
+	}
+	answer = triangle[0][0];
+
+
+	return answer;
+}
+
+int main()
+{
+	vector<vector<int>> triangle = {
+		 {7},
+		 {3, 8},
+		 {8, 1, 0},
+		 {2, 7, 4, 4},
+		 {4, 5, 2, 6, 5}
+	};
+	cout << solution(triangle);
+
+}
 
 ////////////////////////////////////////////////////////////////////////////
-//tukorea rbg거리
+//프로그래머스 등굣길
+
+#include <string>
+#include <vector>
+#include<iostream>
+
+using namespace std;
+
+
+
+int solution(int m, int n, vector<vector<int>> puddles) {
+	int answer = 0;
+	vector<vector<char>> root(n, vector<char>(m, '0'));
+	vector<vector<int>> dp(n, vector<int>(m, 0));
+	dp[0][0] = 1;
+	for (const auto& v : puddles)
+	{
+		root[v[1] - 1][v[0] - 1] = '1';
+	}
+	for (int i = 0; i < n; ++i)
+	{
+		for (int j = 0; j < m; ++j)
+		{
+
+			if (i == 0 && j == 0)continue;
+			if (root[i][j] == '1')continue;
+			if (i == 0)
+			{
+				dp[i][j] = dp[i][j - 1] % 1000000007;
+				continue;
+			}
+			if (j == 0)
+			{
+				dp[i][j] = dp[i - 1][j] % 1000000007;
+				continue;
+			}
+			dp[i][j] = (dp[i][j - 1] + dp[i - 1][j]) % 1000000007;
+
+		}
+	}
+	answer = dp[n - 1][m - 1];
+
+	return answer;
+}
+
+int main() {
+	int m = 4;
+	int n = 3;
+	vector<vector<int>> puddles = { {2, 2} };
+
+	// 올바른 정답인 4가 출력됩니다.
+	cout << "최종 결과: " << solution(m, n, puddles) << endl;
+
+	return 0;
+}
+
+////////////////////////////////////////////////////////////////////////////
+//tukorea 내려가기
+
+#include<iostream>
+#include<vector>
+#include<algorithm>
+
+using namespace std;
+
+int main()
+{
+	int cnt;
+	cin >> cnt;
+	int n, m;
+	vector<vector<int>>board(cnt, vector<int>(3));
+	vector<vector<int>>dp(cnt, vector<int>(3));
+
+	for (int i = 0; i < cnt; ++i)
+	{
+		cin >> board[i][0] >> board[i][1] >> board[i][2];
+		dp[i][0] = board[i][0];
+		dp[i][1] = board[i][1];
+		dp[i][2] = board[i][2];
+	}
+	for (int i = 1; i < cnt; ++i)
+	{
+
+		board[i][0] += max(board[i - 1][0], board[i - 1][1]);
+		board[i][1] += max({ board[i - 1][0], board[i - 1][1], board[i - 1][2] });
+		board[i][2] += max(board[i - 1][1], board[i - 1][2]);
+
+	}
+	for (int i = 1; i < cnt; ++i)
+	{
+
+		dp[i][0] += min(dp[i - 1][0], dp[i - 1][1]);
+		dp[i][1] += min({ dp[i - 1][0], dp[i - 1][1], dp[i - 1][2] });
+		dp[i][2] += min(dp[i - 1][1], dp[i - 1][2]);
+
+	}
+	m = *max_element(board[cnt - 1].begin(), board[cnt - 1].end());
+	n = *min_element(dp[cnt - 1].begin(), dp[cnt - 1].end());
+
+	cout << m << ' ' << n;
+
+}
+
+////////////////////////////////////////////////////////////////////////////
+//tukorea rbg거
