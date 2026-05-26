@@ -2077,4 +2077,393 @@ int main()
 }
 
 ////////////////////////////////////////////////////////////////////////////
-//tukorea rbg거
+//tukorea 택배배송
+
+#include<iostream>
+#include<vector>
+#include<queue>
+
+using namespace std;
+
+const int inf = 1e9;
+
+int main()
+{
+	int node, edge;
+	cin >> node >> edge;
+
+	vector<vector<pair<int, int>>> graph(node);
+	for (int i = 0; i < edge; ++i)
+	{
+		int a, b, c;
+		cin >> a >> b >> c;
+		--a; --b;
+		graph[a].push_back({ b, c });
+		graph[b].push_back({ a, c });
+	}
+	int start = 0;
+	int end = node - 1;
+
+	vector<int>dist(node, inf);
+
+	priority_queue<pair<int, int>, vector<pair<int, int>>, greater<>>pq;
+
+	dist[start] = 0;
+	pq.push({ 0, start });
+	while (!pq.empty())
+	{
+		int cost = pq.top().first;
+		int cur = pq.top().second;
+		pq.pop();
+
+		if (cost > dist[cur])continue;
+		for (auto& next : graph[cur])
+		{
+			int nextNode = next.first;
+			int nextCost = next.second;
+			int newCost = cost + nextCost;
+
+			if (newCost < dist[nextNode])
+			{
+				dist[nextNode] = newCost;
+				pq.push({ newCost, nextNode });
+			}
+		}
+
+	}
+
+	cout << dist[end];
+
+}
+
+////////////////////////////////////////////////////////////////////////////
+//tukorea 순회강연
+
+#include<iostream>
+#include<vector>
+#include<queue>
+#include<algorithm>
+
+using namespace std;
+
+int main()
+{
+	int n;
+	cin >> n;
+	vector<pair<int, int>>v;
+	for (int i = 0; i < n; ++i)
+	{
+		int p, d;
+		cin >> p >> d;
+		v.push_back({ d, p });
+	}
+	sort(v.begin(), v.end());
+
+
+	priority_queue<int, vector<int>, greater<>>pq;
+
+	for (auto& lec : v)
+	{
+		int d = lec.first;
+		int p = lec.second;
+		pq.push(p);
+		if (pq.size() > d)
+			pq.pop();
+	}
+
+	int result = 0;
+
+	while (not pq.empty())
+	{
+		result += pq.top();
+		pq.pop();
+	}
+	cout << result;
+}
+
+
+
+
+////////////////////////////////////////////////////////////////////////////
+//tukorea 소가~4
+
+#include<iostream>
+#include<vector>
+#include<algorithm>
+#include<queue>
+
+using namespace std;
+
+int main()
+{
+	int c, n;
+	cin >> c >> n;
+
+	vector<int>cv(c);
+	for (int i = 0; i < c; ++i)
+	{
+		cin >> cv[i];
+	}
+	vector<pair<int, int>>nv;
+	for (int i = 0; i < n; ++i)
+	{
+		int a, b;
+		cin >> a >> b;
+		nv.push_back({ a, b });
+	}
+
+	sort(cv.begin(), cv.end());
+	sort(nv.begin(), nv.end());
+
+	priority_queue<int, vector<int>, greater<>>pq;
+
+	int j = 0;
+	int result = 0;
+	for (int i = 0; i < c; ++i)
+	{
+		int t = cv[i];
+		while (j < n && nv[j].first <= t)
+		{
+			pq.push(nv[j].second);
+			++j;
+		}
+		while (not pq.empty() && pq.top() < t)
+		{
+			pq.pop();
+		}
+		if (not pq.empty())
+		{
+			pq.pop();
+			++result;
+		}
+	}
+	cout << result;
+
+
+}
+
+
+////////////////////////////////////////////////////////////////////////////
+//tukorea 다음순열
+
+#include<iostream>
+#include<vector>
+#include<algorithm>
+
+using namespace std;
+
+int main()
+{
+	int n, k;
+	cin >> n >> k;
+
+	vector<vector<int>> v(k, vector<int>(n));
+
+	for (int i = 0; i < k; ++i)
+		for (int j = 0; j < n; ++j)
+			cin >> v[i][j];
+
+	for (int t = 0; t < k; ++t)
+	{
+		vector<int>& cur = v[t];
+
+		int a = -1;
+		for (int i = n - 2; i >= 0; --i)
+		{
+			if (cur[i] < cur[i + 1])
+			{
+				a = i;
+				break;
+			}
+		}
+		int b = -1;
+
+		for (int i = n - 1; i > a; --i)
+		{
+			if (cur[i] > cur[a])
+			{
+				b = i;
+				break;
+			}
+		}
+
+
+		swap(cur[a], cur[b]);
+
+
+		reverse(cur.begin() + a + 1, cur.end());
+
+	}
+
+	for (int i = 0; i < k; ++i)
+	{
+		for (int x : v[i])
+			cout << x << " ";
+		cout << '\n';
+	}
+}
+
+////////////////////////////////////////////////////////////////////////////
+//프로그래머스 합승택시
+
+#include <string>
+#include <vector>
+#include<map>
+#include<queue>
+#include<iostream>
+
+using namespace std;
+
+
+map<int, map<int, int>> graph;
+vector<vector<int>> d;
+
+void dijkstra(int start) {
+	priority_queue <pair<int, int>, vector<pair<int, int>>, greater<pair<int, int>>> pq;
+	d[start][start] = 0;
+	pq.push({ 0, start });
+	while (not pq.empty())
+	{
+		int dist = pq.top().first;
+		int now = pq.top().second;
+		pq.pop();
+		if (d[start][now] < dist) continue;
+		for (auto p : graph[now]) {
+			int adjacent = p.first;
+			int weight = p.second;
+			if (dist + weight < d[start][adjacent]) {
+				d[start][adjacent] = dist + weight;
+				pq.push({ dist + weight, adjacent });
+			}
+		}
+	}
+}
+
+int solution(int n, int s, int a, int b, vector<vector<int>> fares) {
+	int answer = (int)1e8;
+	graph.clear();
+
+	for (auto p : fares) {
+		int u = p[0];
+		int v = p[1];
+		int w = p[2];
+		graph[u][v] = w;
+		graph[v][u] = w;
+
+	}
+
+	d.clear();
+	d.resize(n + 1, vector<int>(n + 1, (int)1e8));
+	dijkstra(s);
+	dijkstra(a);
+	dijkstra(b);
+
+	//for (int i = 1; i <= n; ++i) {
+	//    for (int j = 1; j <= n; ++j) {
+	//        cout << d[i][j] << endl;
+	//    }
+	//}
+	for (int k = 1; k <= n; ++k) {
+		answer = min(answer, d[s][k] + d[a][k] + d[b][k]);
+	}
+	return answer;
+}
+
+////////////////////////////////////////////////////////////////////////////
+//tukorea 파티
+
+#include<iostream>
+#include<vector>
+#include<queue>
+
+using namespace std;
+
+const int INF = 1e9;
+
+int N, M, X;
+
+
+vector<int> dijkstra(vector<vector<pair<int, int>>>& g, int start)
+{
+	vector<int> dist(N + 1, INF);
+	priority_queue<pair<int, int>, vector<pair<int, int>>, greater<>> pq;
+
+	dist[start] = 0;
+	pq.push({ 0, start });
+
+	while (!pq.empty())
+	{
+		int cost = pq.top().first;
+		int cur = pq.top().second;
+		pq.pop();
+
+		if (cost > dist[cur]) continue;
+
+		for (auto& next : g[cur])
+		{
+			int nextNode = next.first;
+			int nextCost = next.second;
+
+			int newCost = cost + nextCost;
+
+			if (newCost < dist[nextNode])
+			{
+				dist[nextNode] = newCost;
+				pq.push({ newCost, nextNode });
+			}
+		}
+	}
+
+	return dist;
+}
+
+int main()
+{
+
+	vector<vector<pair<int, int>>> graph;
+	vector<vector<pair<int, int>>> reverseGraph;
+
+	cin >> N >> M >> X;
+
+	graph.resize(N + 1);
+	reverseGraph.resize(N + 1);
+
+	for (int i = 0; i < M; ++i)
+	{
+		int a, b, t;
+		cin >> a >> b >> t;
+
+		graph[a].push_back({ b, t });
+		reverseGraph[b].push_back({ a, t });
+	}
+
+	vector<int> dist1 = dijkstra(graph, X);
+	vector<int> dist2 = dijkstra(reverseGraph, X);
+
+	int result = 0;
+
+	for (int i = 1; i <= N; ++i)
+	{
+		result = max(result, dist1[i] + dist2[i]);
+	}
+
+	cout << result;
+}
+
+////////////////////////////////////////////////////////////////////////////
+//tukorea 택배배송
+
+
+////////////////////////////////////////////////////////////////////////////
+//tukorea 택배배송
+
+
+////////////////////////////////////////////////////////////////////////////
+//tukorea 택배배송
+
+
+////////////////////////////////////////////////////////////////////////////
+//tukorea 택배배송
+
+
+
