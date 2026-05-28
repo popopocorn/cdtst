@@ -2516,8 +2516,112 @@ int main()
 
 
 ////////////////////////////////////////////////////////////////////////////
-//tukorea 택배배송
+//tukorea 장애물
 
+#include<iostream>
+#include<vector>
+#include<queue>
+#include<tuple>
+
+using namespace std;
+
+const long long INF = 1e18;
+
+struct Edge {
+	int to;
+	int w;
+	int idx;
+
+};
+
+
+long long dijkstra(vector<vector<Edge>> graph, int block_idx = -1, int V) {
+	vector<long long> dist(V + 1, INF);
+	priority_queue<pair<long long, int>, vector<pair<long long, int>>, greater<>> pq;
+
+	dist[1] = 0;
+	pq.push({ 0, 1 });
+
+	while (!pq.empty()) {
+		auto [cd, cur] = pq.top(); pq.pop();
+		if (cd > dist[cur]) continue;
+
+		for (auto& e : graph[cur]) {
+			long long w = e.w;
+
+			// 특정 간선만 2배
+			if (e.idx == block_idx)
+				w *= 2;
+
+			if (dist[e.to] > cd + w) {
+				dist[e.to] = cd + w;
+				pq.push({ dist[e.to], e.to });
+			}
+		}
+	}
+
+	return dist[V];
+}
+
+int main() {
+	int V, E;
+	vector<vector<Edge>> graph;
+	vector<tuple<int, int, int>> edges;
+	cin >> V >> E;
+
+	graph.resize(V + 1);
+
+	for (int i = 0; i < E; i++) {
+		int u, v, w;
+		cin >> u >> v >> w;
+
+		edges.push_back({ u, v, w });
+
+		graph[u].push_back({ v, w, i });
+		graph[v].push_back({ u, w, i });
+	}
+
+
+	vector<long long> dist(V + 1, INF);
+	vector<int> parent(V + 1, -1);
+	vector<int> parent_edge(V + 1, -1);
+
+	priority_queue<pair<long long, int>, vector<pair<long long, int>>, greater<>> pq;
+	dist[1] = 0;
+	pq.push({ 0,1 });
+
+	while (!pq.empty()) {
+		auto [cd, cur] = pq.top(); pq.pop();
+		if (cd > dist[cur]) continue;
+
+		for (auto& e : graph[cur]) {
+			if (dist[e.to] > cd + e.w) {
+				dist[e.to] = cd + e.w;
+				parent[e.to] = cur;
+				parent_edge[e.to] = e.idx;
+				pq.push({ dist[e.to], e.to });
+			}
+		}
+	}
+
+	long long A = dist[V];
+
+	vector<int> path_edges;
+	int cur = V;
+	while (cur != 1) {
+		path_edges.push_back(parent_edge[cur]);
+		cur = parent[cur];
+	}
+
+	long long answer = 0;
+
+	for (int idx : path_edges) {
+		long long B = dijkstra(graph, idx, V);
+		answer = max(answer, B - A);
+	}
+
+	cout << answer << '\n';
+}
 
 ////////////////////////////////////////////////////////////////////////////
 //tukorea 택배배송
