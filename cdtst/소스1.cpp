@@ -2451,7 +2451,68 @@ int main()
 }
 
 ////////////////////////////////////////////////////////////////////////////
-//tukorea 택배배송
+//tukorea 도시분할계획
+
+#include<iostream>
+#include<vector>
+#include<algorithm>
+
+using namespace std;
+
+struct edge {
+	int a;
+	int b;
+	int cost;
+
+	friend bool operator<(const edge& a, const edge& b)
+	{
+		return a.cost < b.cost;
+	}
+};
+
+int find(vector<int>& parent, int x)
+{
+	if (parent[x] == x)return x;
+	return parent[x] = find(parent, parent[x]);
+}
+void unite(vector<int>& parent, int a, int b)
+{
+	a = find(parent, a);
+	b = find(parent, b);
+	if (a != b)parent[b] = a;
+}
+
+
+int main()
+{
+	int n, m;
+	cin >> n >> m;
+	vector<int>parent(n);
+	for (int i = 0; i < n; ++i)parent[i] = i;
+	vector<edge>e(m);
+	for (int i = 0; i < m; ++i)
+	{
+		cin >> e[i].a >> e[i].b >> e[i].cost;
+		--e[i].a;
+		--e[i].b;
+	}
+	sort(e.begin(), e.end());
+
+	int answer = 0;
+	int maxcost = 0;
+
+	for (const auto& p : e)
+	{
+		if (find(parent, p.a) != find(parent, p.b))
+		{
+			unite(parent, p.a, p.b);
+			answer += p.cost;
+			maxcost = max(maxcost, p.cost);
+		}
+	}
+	cout << answer - maxcost;
+
+}
 
 
 ////////////////////////////////////////////////////////////////////////////
